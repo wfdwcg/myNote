@@ -1,6 +1,6 @@
 ###1.解释”static”关键字？
   
-（1）static修饰的变量称作静态变量，被所有对象所共享，在内存中只有一份，它仅在类初次加载时才被初始化，可以当作全局变量来用。  
+（1）static修饰的变量称作静态变量，被所有对象所共享，在内存中只有一份(区别于类的实例变量，实例变量是每个实例都有一份)，它仅在类初次加载时才被初始化，可以当作全局变量来用。  
 static int i = 1;  
 
 （2）static修饰的方法（函数）称作静态方法，它不依赖于任何对象就可被访问，它不依附于任何对象，因此没有this。  
@@ -53,3 +53,61 @@ String b=new String("foo");
    * 在Java 8中，HashMap的数据结构是由Node<k,v>作为元素组成的数组：（1）如果多个值hash到同一桶中则组成一个链表，当这个链表的节点个数超过一定值时，将这个链表重构为一个二叉树；（2）如果发现map中的元素个数超过了阈值，则进行空间扩容——空间倍增。
    * HashMap和HashTable数据结构和操作基本相同，区别是前者是非线程安全，并且HashMap接受value为null。
    * ConcurrentHashMap和HashTable都是线程安全的，区别是：HashTable每次操作都会锁住整个表结构，导致一次只能有一个线程访问HashTable对象，而ConcurrentHashMap不会，只会锁住某个节点，只有在涉及到size操作时才会锁整个表结构。
+   
+ 
+7、解释内存中栈(stack)、堆(heap)和方法区(method area)的用法。 
+答：通常我们定义基本数据类型(int i=1)，对象引用(Integer i =2)，还有函数调用的现场(出入参数、返回值等)都使用栈空间；  
+通过new关键字和构造器创建的对象则放在堆空间，堆是垃圾收集器管理的主要区域，由于现在的垃圾收集器都采用分代收集算法，所以堆空间还可以细分为新生代和老生代，再具体一点可以分为Eden、Survivor（又可分为From Survivor和To Survivor）、Tenured；方法区和堆都是各个线程共享的内存区域，用于存储已经被JVM加载的类信息、常量、静态变量、JIT编译器编译后的代码等数据；  
+程序中的字面量和常量都是放在常量池中。栈空间操作起来最快但是栈很小，通常大量的对象都是放在堆空间，栈和堆的大小都可以通过JVM的启动参数来进行调整，栈空间用光了会引发StackOverflowError，而堆和常量池空间不足则会引发OutOfMemoryError。
+
+String str = new String("hello");
+1
+上面的语句中变量str放在栈上，用new创建出来的字符串对象放在堆上，而"hello"这个字面量是放在方法区的。
+
+补充1：较新版本的Java（从Java 6的某个更新开始）中，由于JIT编译器的发展和"逃逸分析"技术的逐渐成熟，栈上分配、标量替换等优化技术使得对象一定分配在堆上这件事情已经变得不那么绝对了。
+
+补充2：运行时常量池相当于Class文件常量池具有动态性，Java语言并不要求常量一定只有编译期间才能产生，运行期间也可以将新的常量放入池中，String类的intern()方法就是这样的。
+
+看看下面代码的执行结果是什么并且比较一下Java 7以前和以后的运行结果是否一致。
+
+String s1 = new StringBuilder("go")
+    .append("od").toString();
+System.out.println(s1.intern() == s1);
+String s2 = new StringBuilder("ja")
+    .append("va").toString();
+System.out.println(s2.intern() == s2);
+  
+  
+8.为什么要装箱（int -- Integer）    
+* （1）把基本类型包装成类，可以使这个类型具有很多方法和状态，比如方法返回Boolean，对处理失败可以直接返回null，而不应该是默认的初始值false（对基本类型来说）  
+* （2）Java向面向对象语言的靠近。其实Java还不算纯正的面向对象语言。真正的面向对象，没有基本数据类型，只有对象。  
+* （3）在泛型中基本类型是不可做泛型参数的。如：List <int> list = new ArrayList<int> ();这是不合法的。只能这样写List<Integer> list = new ArrayList<Integer> ();也就是要用int型的包装类类型来解决基本类型不可以做泛型参数的问题 。
+
+9.String和StringBuilder、StringBuffer的区别？ 
+*   String和StringBuffer/StringBuilder，它们都可以储存和操作字符串。  
+*   String是只读字符串，String引用的字符串内容是不能被改变的（每次String的变化都是新创建了一个String，并把新String指向原来的变量）。  
+*   StringBuffer/StringBuilder类表示的字符串对象可以直接进行修改。StringBuilder是Java 5中引入的，它和StringBuffer的方法完全相同，区别在于它在单线程下使用，因为它所有方面都没有被synchronized修饰(加锁)，因此效率比StringBuffer高。  
+*   字符串的+操作其本质是创建了StringBuilder对象进行append操作，然后将拼接后的StringBuilder对象用toString方法处理成String对象
+  
+10.String s = new String("xyz");创建了几个字符串对象？ 
+   答：两个对象，一个是常量区的"xyz"，一个是用new创建在堆上的对象。
+
+11。Java 中的final关键字有哪些用法？ 
+*    (1)修饰类：表示该类不能被继承；  
+*    (2)修饰方法：表示方法不能被重写；  
+*    (3)修饰变量：表示变量只能一次赋值以后值不能被修改（常量）。
+   
+12. 什么时候用断言（assert）？ 
+ *    断言是常用的调试方式，很多开发语言中都支持这种机制。一般来说，断言用于保证程序最基本、关键的正确性。断言检查通常在开发和测试时开启。为了保证程序的执行效率，在软件发布后断言检查通常是关闭的。断言是一个包含布尔表达式的语句，在执行这个语句时假定该表达式为true；如果表达式的值为false，那么系统会报告一个AssertionError。断言的使用如下面的代码所示：
+    
+    assert(a > 0); // throws an AssertionError if a <= 0
+    断言可以有两种形式： 
+    assert Expression1; 
+    assert Expression1 : Expression2 ; 
+    Expression1 应该总是产生一个布尔值。 
+    Expression2 可以是得出一个值的任意表达式；这个值用于生成显示更多调试信息的字符串消息。
+    
+    要在运行时启用断言，可以在启动JVM时使用-enableassertions或者-ea标记。要在运行时选择禁用断言，可以在启动JVM时使用-da或者-disableassertions标记。要在系统类中启用或禁用断言，可使用-esa或-dsa标记。还可以在包的基础上启用或者禁用断言。
+    
+
+
