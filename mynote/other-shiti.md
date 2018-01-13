@@ -7,6 +7,7 @@
 3.get和post请求的区别？
 * get用来从服务器获得数据，post用来向服务器提交数据； 
 * get将表单数据按照name=value的形式，添加URL后面，并且使用"?"连接，而各个变量间使用"&"连接；post是将表单数据放在HTTP协议的请求头或消息体中传递URL； 
-* get传输的数据要受到URL长度限制（1024字节）；而post可以传输大量的数据，上传文件通常要使用post方式； 
-  ④使用get时参数会显示在地址栏上，如果这些数据不是敏感数据，那么可以使用get；对于敏感数据还是应用使用post； 
-  ⑤get使用MIME类型application/x-www-form-urlencoded的URL编码（也叫百分号编码）文本的格式传递参数，保证被传送的参数由遵循规范的文本组成，例如一个空格的编码是"%20"。
+(http://xxx.com/visitRecord?type=weixin&userId=107
+)
+* get传输数据要受到URL长度限制（1024字节）；而post可以传输大量数据，上传文件通常使用post方式； 
+* 使用get时参数会显示在地址栏上，如果这些数据不是敏感数据，那么可以使用get；对于敏感数据则应使用post
