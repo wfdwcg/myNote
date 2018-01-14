@@ -24,7 +24,7 @@ static int i = 1;
 ###3.java的四种引用方式：强引用，软引用，弱引用，虚引用  
 * （1）强引用：引用关系最强，永远不会被垃圾回收，JVM宁愿抛出内存溢出错误也不回收（比如使用new来创建的对象）  
 * （2）软引用：引用关系次强，只有内存空间不足时，垃圾回收器才会回收  
-* （3）弱引用：内存回收时立即回收这类对象 （性能优化策略：建议将线程内创建的map型缓存类数据设为弱引用）  
+* （3）弱引用：内存回收时立即回收这类对象 （性能优化策略：建议将线程内创建的map型缓存类数据设为弱引用，如：WeakHashMap与正常的 HashMap 类似，但是使用弱引用作为 key，当key没有任何引用时，key/value 将会被回收。）  
 * （4）虚引用：引用关系最弱，相当于在虚引用上加了一个通知机制，告诉程序该对象将要被回收
 
 ###4."=="和equals方法有什么区别？   
@@ -49,10 +49,11 @@ String b=new String("foo");
  * 子类方法的访问权限只能比父类的更大。如果父类方法是private类型，则等于子类增加一个新方法（子类不可见父类的private类型 public protected private）。（异常更少，访问权限更大）
  
  ###6.HashMap的数据结构是什么？如何实现的？和HashTable、ConcurrentHashMap的区别？
-   
+   * HashMap以键值对(KV)形式存储元素。HashMap需要一个hash函数，它使用hashCode()和equals()方法执行添加和检索。调用put(key,v)时HashMap会计算key的hash值，然后把键值对存储在集合中合适的索引上。如果key已经存在，value会被更新成新值。
    * 在Java 8中，HashMap的数据结构是由Node<k,v>作为元素组成的数组：（1）如果多个值hash到同一桶中则组成一个链表，当这个链表的节点个数超过一定值时，将这个链表重构为一个二叉树；（2）如果发现map中的元素个数超过了阈值，则进行空间扩容——空间倍增。
    * HashMap和HashTable数据结构和操作基本相同，区别是前者是非线程安全，并且HashMap接受value为null。
    * ConcurrentHashMap和HashTable都是线程安全的，区别是：HashTable每次操作都会锁住整个表结构，导致一次只能有一个线程访问HashTable对象，而ConcurrentHashMap不会，只会锁住某个节点，只有在涉及到size操作时才会锁整个表结构。
+   * HashMap使用hashCode()和equals()方法确定键值对索引，当根据k获取v时也会用到这两个方法。如果没有正确实现这两个方法，两个不同k可能有相同hash值，可能会被集合认为相等。而且这两个方法也用来发现重复元素。所以这两个方法对HashMap的精确性和正确性是至关重要的。
    
  
 7、解释内存中栈(stack)、堆(heap)和方法区(method area)的用法。 
