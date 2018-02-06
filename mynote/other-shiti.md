@@ -45,6 +45,15 @@
  9.举例几种注解
  * @Autowired：提供更精细的控制，包括自动装配在何处完成以及如何完成。它可以像@Required一样自动装配setter方法、构造器、属性或具有任意名称和参数的方法。
  * @Qualifier：当有多个相同类型的bean而只有其中一个需要自动装配时，将@Qualifier 注解和@Autowire 注解结合使用消除这种混淆，指明需要装配的bean。
+
+10.git镜像仓库/maven镜像库：
+*将git远程的仓库（master+所有分支clone到本地），对应的git clone一般只可以clone主干分支*
+*git clone --mirror   git remote update*
+*maven镜像库(setting.xml)：maven构建时依赖的jar包下载源*
+
+11.git暂存区
+*类似于缓存的概念，将准备提交的数据分批次放入暂存区，然后可以一次性commit*
+*设计初衷是方便命令行下的操作，有选择的提交数据（git add xxx.java）*
  
  
    
