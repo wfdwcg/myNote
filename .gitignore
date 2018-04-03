@@ -1,0 +1,20 @@
+hs_err_pid*
+!.gitignore
+
+#idea
+*/target/
+**/*.iml
+
+# eclipse specific git ignore
+.project
+.metadata
+bin/**
+tmp/**
+.classpath
+.settings/
+.idea/
+
+*.iws
+*.ipr
+*.DS_Store
+*.txt
